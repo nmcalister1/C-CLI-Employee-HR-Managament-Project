@@ -7,6 +7,7 @@
 #include <iostream>
 #include <fstream>
 #include <ctime>
+#include <iomanip>
 using namespace std; 
 
 /// manually instantiate a manager and a couple of employees ///
@@ -85,6 +86,7 @@ int main(){
     time_t logouttime; 
 
     ofstream outputFile("log.txt");
+    
 
     cout << "\n--- Welcome " << checkUsername << " ---\n"<< endl; 
 
@@ -169,8 +171,17 @@ int main(){
                                                 newManager.setUsername(newUsername);
                                                 newManager.setPassword(newPassword);
 
+                                                // Convert the float to string with controlled precision
+                                                string salaryString = to_string(newManager.getSalary());
+                                                size_t dotPosition = salaryString.find('.');
+                                                size_t precision = 2; // Set your desired precision
+
+                                                if (dotPosition != std::string::npos && dotPosition + precision + 1 < salaryString.size()) {
+                                                    salaryString.erase(dotPosition + precision + 1);
+                                                }
+
                                                 managers.push_back(newManager);
-                                                session.addLog("An employee was updated to a manager.\nThe following values were entered:\nSalary: " + to_string(newManager.getSalary()) + "\nUsername: " + newManager.getUsername() + "\nPassword: " + newManager.getPassword() + "\n"); 
+                                                session.addLog("An employee was updated to a manager.\nThe following values were entered:\nSalary: $" + salaryString + "\nUsername: " + newManager.getUsername() + "\nPassword: " + newManager.getPassword() + "\n"); 
                                                
                                                 
                                                 
@@ -212,7 +223,15 @@ int main(){
                                             cin >> choiceThree;
                                             if (choiceThree == 1){
                                                 employees[i].setHourlyPayRate(newHourlyPayRate);
-                                                session.addLog(employeeToManagerName + "'s hourly pay rate was updated.\nThe following value was entered:\nHourly Pay Rate: " + to_string(newHourlyPayRate) + "\n"); 
+                                                // Convert the float to string with controlled precision
+                                                string payRateString = to_string(newHourlyPayRate);
+                                                size_t dotPosition = payRateString.find('.');
+                                                size_t precision = 2; // Set your desired precision
+
+                                                if (dotPosition != std::string::npos && dotPosition + precision + 1 < payRateString.size()) {
+                                                    payRateString.erase(dotPosition + precision + 1);
+                                                }
+                                                session.addLog(employeeToManagerName + "'s hourly pay rate was updated.\nThe following value was entered:\nHourly Pay Rate: $" + payRateString + "\n"); 
                                                
                                                 
                                                 
@@ -313,7 +332,7 @@ int main(){
                             newWorker.setHourlyPayRate(hourlyPayRate);
 
                             employees.push_back(newWorker);
-                            session.addLog("A new employee was created.\nThe following value was entered:\nName: " + name + "\nNumber: " + to_string(number) + "\nHire Date: " + hireDate + "\nShift: " + to_string(shift) + "\nHourly Pay Rate: " + to_string(hourlyPayRate) + "\n"); 
+                            session.addLog("A new employee was created.\nThe following value was entered:\nName: " + name + "\nNumber: " + to_string(number) + "\nHire Date: " + hireDate + "\nShift: " + to_string(shift) + "\nHourly Pay Rate: $" + to_string(hourlyPayRate) + "\n"); 
                             
                             
                             
@@ -346,7 +365,7 @@ int main(){
                             newManager.setPassword(password);
 
                             managers.push_back(newManager);
-                            session.addLog("A new manager was created.\nThe following values were eneterd:\nSalary: " + to_string(salary) + "\nUsername: " + username + "\nPassword: " + password + "\n");
+                            session.addLog("A new manager was created.\nThe following values were eneterd:\nSalary: $" + to_string(salary) + "\nUsername: " + username + "\nPassword: " + password + "\n");
                             
                             
                             
@@ -358,7 +377,8 @@ int main(){
             case 4:
                 logouttime = time(nullptr);
                 session.setLogoutTime(logouttime);
-                session.addLog("Logging out at " + to_string(logouttime) + "\n");
+                session.addLog("Logging out at " + session.displayFormattedTime(logouttime) + "\n");
+                
     
                 outputFile << session.logSessionInfo();
                 

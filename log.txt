@@ -1,0 +1,15 @@
+
+
+Session Data:
+GUID: 1804289383
+User: nmcalister
+Login Time: 2023-12-12 15:55:33
+Changes Made: An employee was updated to a manager.
+The following values were entered:
+Salary: $75000.00
+Username: johndoe
+Password: password
+
+Logging out at 2023-12-12 15:56:01
+
+

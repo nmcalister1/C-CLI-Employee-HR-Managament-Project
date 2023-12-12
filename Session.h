@@ -32,17 +32,25 @@ class Session{
         time_t getLoginTime() const { return authTime; }
         time_t getLogoutTime() const { return logoutTime; }
 
-        void showSessionInfo() const {
+        string displayFormattedTime(time_t time){
+            // Format the date and time
+            char formattedTime[100]; // Adjust the size accordingly
+            strftime(formattedTime, sizeof(formattedTime), "%Y-%m-%d %H:%M:%S", localtime(&time));
+            return formattedTime; 
+        }
+
+        void showSessionInfo() {
             cout << "Session Data:" << endl; 
             cout << "GUID: " << guid << endl; 
             cout << "User: " << user << endl; 
-            cout << "Authentication/Login Time: " << authTime << endl; 
+            cout << "Authentication/Login Time: " << displayFormattedTime(authTime) << endl; 
             cout << "Changes Made: " << endl; 
             cout << logString << endl; 
         }
 
+
         string logSessionInfo() {
-            return "\n\nSession Data:\nGUID: " + guid + "\nUser: " + user + "\nLogin Time: " + to_string(authTime) + "\nChanges Made: " + logString + "\n";
+            return "\n\nSession Data:\nGUID: " + guid + "\nUser: " + user + "\nLogin Time: " + displayFormattedTime(authTime) + "\nChanges Made: " + logString + "\n";
         }
 };
 #endif
