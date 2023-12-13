@@ -8,9 +8,12 @@
 #include <fstream>
 #include <ctime>
 #include <iomanip>
+#include <limits>
+#include <cctype>
 using namespace std; 
 
-/// manually instantiate a manager and a couple of employees ///
+bool isInteger(const string& s);
+
 
 int main(){
     vector<ProductionWorker> employees;
@@ -34,23 +37,40 @@ int main(){
 
     Session session;
 
+    
+
     do {
         cout << "--- Enter Your Login Credentials ---" << endl; 
         cout << "Username: ";
-        cin >> checkUsername;
+        getline(cin, checkUsername);
+        while (checkUsername.find(' ') != string::npos || isInteger(checkUsername)) {
+            cout << "Invalid username input. Spaces are not allowed. Cannot be an integer." << endl;
+            cout << "Username: ";
+            getline(cin, checkUsername);
+        }
+        
         cout << "Password: "; 
-        cin >> checkPassword; 
+        getline(cin, checkPassword);
+        while (checkPassword.find(' ') != string::npos || isInteger(checkPassword)) {
+            cout << "Invalid password input. Spaces are not allowed. Cannot be an integer." << endl;
+            cout << "Password: ";
+            getline(cin, checkPassword);
+        }
+
+        authUsernameAndPassword = false; 
 
         for (int i = 0; i < managers.size(); i++){
             if (managers[i].getUsername() == checkUsername && managers[i].getPassword() == checkPassword){
                 authUsernameAndPassword = true;
                 session.setUser(managers[i].getUsername());
-            } else {
-                cout << "\n\n";
-                cout << "Your login credentials are not valid, please try again.\n" << endl;
+                break; 
             }
         }
-    } while (authUsernameAndPassword == false);
+        if (!authUsernameAndPassword){
+            cout << "\n\n";
+            cout << "Your login credentials are not valid, please try again.\n" << endl;
+        }
+    } while (!authUsernameAndPassword);
 
     int choice; 
     int updateEmployeeChoice; 
@@ -85,6 +105,8 @@ int main(){
 
     time_t logouttime; 
 
+    bool nameBool = false; 
+
     ofstream outputFile("log.txt");
     
 
@@ -98,7 +120,19 @@ int main(){
         cout << "4. Exit\n";
 
         cout << "Enter your choice: ";
-        cin >> choice;
+        if (cin >> choice){
+            cout << "\n";
+        } else {
+
+            // Input was not an integer
+            cout << "Invalid input. Please enter an integer. Press ENTER to go back to menu." << endl;
+
+            // Clear the input stream to handle the invalid input
+            cin.clear();
+
+            // Discard the invalid input from the input buffer
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        }
         cin.ignore();
 
         switch (choice) {
@@ -124,14 +158,25 @@ int main(){
                     cout << "4. Exit\n";
 
                     cout << "Enter your choice: ";
-                    cin >> updateEmployeeChoice;
-                    //cin.ignore();
+                    if (cin >> updateEmployeeChoice){
+                        cout << "\n";
+                    } else {
+                        // Input was not an integer
+                        cout << "Invalid input. Please enter an integer. Press ENTER to go back to menu." << endl;
+
+                        // Clear the input stream to handle the invalid input
+                        cin.clear();
+
+                        // Discard the invalid input from the input buffer
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    }
 
                     switch(updateEmployeeChoice){
                         case 1:
                             // assign employee to manager
                             
                             do {
+                                nameBool = false; 
                                 cout << "\nYou selected to assign an employee to a manager.\n";
                                 cout << "Enter the employee's name that you would like to change to a manager." << endl; 
                                 cout << "Here is the list of employees names:" << endl; 
@@ -141,8 +186,34 @@ int main(){
                                 cin.ignore();
                                 cout << "Enter their name: ";
                                 getline(cin, employeeToManagerName);
+                                for (int i = 0; i < employees.size(); i++){
+                                    if (employees[i].getName() == employeeToManagerName){
+                                        nameBool = true;
+                                    }                               
+                                }
+                                while (nameBool != true){
+                                    cout << "\nThat is not a valid employee name." << endl; 
+                                    cout << "Here is the list of employees names:" << endl; 
+                                    for (int i = 0; i < employees.size(); i++){
+                                        cout << employees[i].getName() << endl; 
+                                    }
+                                    //cin.ignore();
+                                    cout << "Enter their name: ";
+                                    getline(cin, employeeToManagerName);
+                                    for (int i = 0; i < employees.size(); i++){
+                                        if (employees[i].getName() == employeeToManagerName){
+                                            nameBool = true;
+                                        }                               
+                                    }
+                                }
+                                
                                 cout << "Are you sure that this is the employee that you want to change to become a manager?: " << employeeToManagerName << " (1 for yes or 2 for no): ";
-                                cin >> employeeToManagerBool;
+                                while (!(cin >> employeeToManagerBool) || employeeToManagerBool != 1 && employeeToManagerBool != 2) {
+                                    cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                                    cout << "Are you sure that this is the employee that you want to change to become a manager?: " << employeeToManagerName << " (1 for yes or 2 for no): ";
+                                    cin.clear(); 
+                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                }
                             } while(employeeToManagerBool != 1);
                             for (int i = 0; i < employees.size(); i++){
                                     if (employees[i].getName() == employeeToManagerName){
@@ -150,13 +221,29 @@ int main(){
                                         indexToDelete = i; 
                                         do {
                                             cout << "\n";
-                                            cout << "You have selected to create a new manager." << endl; 
+                                            cout << "You have selected to create a new manager out of " << employeeToManagerName << endl; 
                                             cout << "Manager Salary (60000.00): "; 
-                                            cin >> newSalary; 
+                                            while (!(cin >> newSalary) || newSalary < 0.0) {
+                                                cout << "Invalid salary input. Please enter a valid non-negative float." << endl;
+                                                cout << "Manager Salary (60000.00): ";
+                                                cin.clear(); 
+                                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                            }
+                                            cin.ignore();
                                             cout << "Manager Username (newuser123 [no spaces allowed]): ";
-                                            cin >> newUsername; 
+                                            getline(cin, newUsername);
+                                            while (newUsername.find(' ') != string::npos || isInteger(newUsername)) {
+                                                cout << "Invalid username input. Spaces are not allowed. Cannot be an integer." << endl;
+                                                cout << "Username: ";
+                                                getline(cin, newUsername);
+                                            }
                                             cout << "Manager Password (password123 [no spaces allowed]): ";
-                                            cin >> newPassword; 
+                                            getline(cin, newPassword);
+                                            while (newPassword.find(' ') != string::npos || isInteger(newPassword)) {
+                                                cout << "Invalid password input. Spaces are not allowed. Cannot be an integer." << endl;
+                                                cout << "Password: ";
+                                                getline(cin, newPassword);
+                                            }
 
                                             cout << "\n";
                                             cout << "These are the values you provided:" << endl; 
@@ -165,7 +252,12 @@ int main(){
                                             cout << "Password: " << newPassword << endl;
                                             cout << "\n";
                                             cout << "Are these values correct? (Type 1 to confirm and add the manager to the system OR 2 to deny and re-enter the values): ";
-                                            cin >> choiceThree;
+                                            while (!(cin >> choiceThree) || choiceThree != 1 && choiceThree != 2) {
+                                                cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                                                cout << "Are these values correct? (Type 1 to confirm and add the manager to the system OR 2 to deny and re-enter the values): ";
+                                                cin.clear(); 
+                                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                            }
                                             if (choiceThree == 1){
                                                 newManager.setSalary(newSalary);
                                                 newManager.setUsername(newUsername);
@@ -196,6 +288,7 @@ int main(){
                         case 2:
                             // update employee pay
                             do {
+                                nameBool = false;
                                 cout << "You selected to update an employees pay.\n";
                                 cout << "Enter the employee's name that you would like to update." << endl; 
                                 cout << "Here is the list of employees names:" << endl; 
@@ -205,22 +298,58 @@ int main(){
                                 cin.ignore();
                                 cout << "Enter their name: ";
                                 getline(cin, employeeToManagerName);
+                                for (int i = 0; i < employees.size(); i++){
+                                    if (employees[i].getName() == employeeToManagerName){
+                                        nameBool = true;
+                                        break; 
+                                    }                               
+                                }
+                                while (nameBool != true){
+                                    cout << "\nThat is not a valid employee name." << endl; 
+                                    cout << "Here is the list of employees names:" << endl; 
+                                    for (int i = 0; i < employees.size(); i++){
+                                        cout << employees[i].getName() << endl; 
+                                    }
+                                    //cin.ignore();
+                                    cout << "Enter their name: ";
+                                    getline(cin, employeeToManagerName);
+                                    for (int i = 0; i < employees.size(); i++){
+                                        if (employees[i].getName() == employeeToManagerName){
+                                            nameBool = true;
+                                        }                               
+                                    }
+                                }
                                 cout << "Are you sure that this is the employee you want to update?: " << employeeToManagerName << " (1 for yes or 2 for no): ";
-                                cin >> employeeToManagerBool;
+                                while (!(cin >> employeeToManagerBool) || employeeToManagerBool != 1 && employeeToManagerBool != 2) {
+                                    cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                                    cout << "Are you sure that this is the employee you want to update?: " << employeeToManagerName << " (1 for yes or 2 for no): ";
+                                    cin.clear(); 
+                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                }
                             } while(employeeToManagerBool != 1);
                             for (int i = 0; i < employees.size(); i++){
                                     if (employees[i].getName() == employeeToManagerName){
                                         do {
                                             cout << "\n"; 
                                             cout <<  employeeToManagerName << "'s new pay: $"; 
-                                            cin >> newHourlyPayRate;
+                                            while (!(cin >> newHourlyPayRate) || newHourlyPayRate < 0.0) {
+                                                cout << "\nInvalid pay rate input. Please enter a valid non-negative float." << endl;
+                                                cout <<  employeeToManagerName << "'s new pay: $"; 
+                                                cin.clear(); 
+                                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                            }
 
                                             cout << "\n";
                                             cout << "This is the value you provided for new pay:" << endl; 
                                             cout << "Pay: $" << newHourlyPayRate << endl;
                                             cout << "\n";
                                             cout << "Is this value correct? (Type 1 to confirm OR 2 to deny and re-enter the values): ";
-                                            cin >> choiceThree;
+                                            while (!(cin >> choiceThree) || choiceThree != 1 && choiceThree != 2) {
+                                                cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                                                cout << "Are these values correct? (Type 1 to confirm and add the manager to the system OR 2 to deny and re-enter the values): ";
+                                                cin.clear(); 
+                                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                            }
                                             if (choiceThree == 1){
                                                 employees[i].setHourlyPayRate(newHourlyPayRate);
                                                 // Convert the float to string with controlled precision
@@ -244,6 +373,7 @@ int main(){
                         case 3:
                             // change employee shift
                             do {
+                                nameBool = false; 
                                 cout << "You selected to update an employees shift.\n";
                                 cout << "Enter the employee's name that you would like to update." << endl; 
                                 cout << "Here is the list of employees names:" << endl; 
@@ -253,15 +383,46 @@ int main(){
                                 cin.ignore();
                                 cout << "Enter their name: ";
                                 getline(cin, employeeToManagerName);
+                                for (int i = 0; i < employees.size(); i++){
+                                    if (employees[i].getName() == employeeToManagerName){
+                                        nameBool = true;
+                                        break; 
+                                    }                               
+                                }
+                                while (nameBool != true){
+                                    cout << "\nThat is not a valid employee name." << endl; 
+                                    cout << "Here is the list of employees names:" << endl; 
+                                    for (int i = 0; i < employees.size(); i++){
+                                        cout << employees[i].getName() << endl; 
+                                    }
+                                    //cin.ignore();
+                                    cout << "Enter their name: ";
+                                    getline(cin, employeeToManagerName);
+                                    for (int i = 0; i < employees.size(); i++){
+                                        if (employees[i].getName() == employeeToManagerName){
+                                            nameBool = true;
+                                        }                               
+                                    }
+                                }
                                 cout << "Are you sure that this is the employee that you want to update?: " << employeeToManagerName << " (1 for yes or 2 for no): ";
-                                cin >> employeeToManagerBool;
+                                while (!(cin >> employeeToManagerBool) || employeeToManagerBool != 1 && employeeToManagerBool != 2) {
+                                    cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                                    cout << "Are you sure that this is the employee that you want to update?: " << employeeToManagerName << " (1 for yes or 2 for no): ";
+                                    cin.clear(); 
+                                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                }
                             } while(employeeToManagerBool != 1);
                             for (int i = 0; i < employees.size(); i++){
                                     if (employees[i].getName() == employeeToManagerName){
                                         do {
                                             cout << "\n"; 
                                             cout <<  employeeToManagerName << "'s new shift (1 for day OR 2 for night): "; 
-                                            cin >> newShift;
+                                            while (!(cin >> newShift) || newShift != 1 && newShift != 2) {
+                                                cout << "\nInvalid shift input. Please enter a 1 or a 2." << endl;
+                                                cout <<  employeeToManagerName << "'s new shift (1 for day OR 2 for night): "; 
+                                                cin.clear(); 
+                                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                            }
 
                                             cout << "\n";
                                             cout << "This is the value you provided for new shift:" << endl; 
@@ -272,7 +433,12 @@ int main(){
                                             }
                                             cout << "\n";
                                             cout << "Is this shift correct? (Type 1 to confirm OR 2 to deny and re-enter the values): ";
-                                            cin >> choiceThree;
+                                            while (!(cin >> choiceThree) || choiceThree != 1 && choiceThree != 2) {
+                                                cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                                                cout << "Is this shift correct? (Type 1 to confirm OR 2 to deny and re-enter the values): ";
+                                                cin.clear(); 
+                                                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                                            }
                                             if (choiceThree == 1){
                                                 employees[i].setShift(newShift);
                                                 session.addLog(employeeToManagerName + "'s shift was updated.\nThe following value was entered:\nShift: " + to_string(newShift) + "(1 is Day Shift and 2 is Night Shift)\n"); 
@@ -293,7 +459,12 @@ int main(){
             case 3:
                 cout << "You selected to create a new employee.\n";
                 cout << "Would you like to create a new production worker or manager? (1 for production worker, 2 for manager): ";
-                cin >> employeeChoice;
+                while (!(cin >> employeeChoice) || employeeChoice != 1 && employeeChoice != 2) {
+                    cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                    cout << "Would you like to create a new production worker or manager? (1 for production worker, 2 for manager): ";
+                    cin.clear(); 
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                }
                 if (employeeChoice == 1){
                     do {
                         cout << "\n";
@@ -301,14 +472,40 @@ int main(){
                         cout << "Production Worker Name (John Smith): "; 
                         cin.ignore();
                         getline(cin, name); 
+                        while (isInteger(name)) {
+                            cout << "\nInvalid production worker name. Cannot be an integer." << endl;
+                            cout << "Production Worker Name (John Smith): "; 
+                            getline(cin, name);
+                        }
                         cout << "Production Worker Number: ";
-                        cin >> number; 
+                        while (!(cin >> number)) {
+                            cout << "\nInvalid input. Please enter a valid number." << endl;
+                            cout << "Production Worker Number: ";
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
+                        cin.ignore();
                         cout << "Production Worker Hire Date (11/26/2018): ";
-                        cin >> hireDate; 
+                        getline(cin, hireDate);
+                        while (hireDate.find(' ') != string::npos || isInteger(hireDate)) {
+                            cout << "\nInvalid hire date input. Spaces are not allowed. Must be in the following format: 11/26/2018" << endl;
+                            cout << "Production Worker Hire Date (11/26/2018): ";
+                            getline(cin, hireDate);
+                        }
                         cout << "Production Worker Shift(1 for day or 2 for night): "; 
-                        cin >> shift; 
+                        while (!(cin >> shift) || shift != 1 && shift != 2) {
+                            cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                            cout << "Production Worker Shift(1 for day or 2 for night): "; 
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
                         cout << "Production Worker Hourly Pay Rate: $";
-                        cin >> hourlyPayRate; 
+                        while (!(cin >> hourlyPayRate) || hourlyPayRate < 0.0) {
+                            cout << "\nInvalid pay rate input. Please enter a valid non-negative float." << endl;
+                            cout << "Production Worker Hourly Pay Rate: $";
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
 
                         cout << "\n";
                         cout << "These are the values you provided:" << endl; 
@@ -323,7 +520,12 @@ int main(){
                         cout << "Hourly Pay Rate: $" << hourlyPayRate << endl;
                         cout << "\n";
                         cout << "Are these values correct? (Type 1 to confirm and add the production worker to the system OR 2 to deny and re-enter the values): ";
-                        cin >> choiceTwo;
+                        while (!(cin >> choiceTwo) || choiceTwo != 1 && choiceTwo != 2) {
+                            cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                            cout << "Are these values correct? (Type 1 to confirm and add the production worker to the system OR 2 to deny and re-enter the values): ";
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
                         if (choiceTwo == 1){
                             newWorker.setName(name);
                             newWorker.setNumber(number);
@@ -332,7 +534,15 @@ int main(){
                             newWorker.setHourlyPayRate(hourlyPayRate);
 
                             employees.push_back(newWorker);
-                            session.addLog("A new employee was created.\nThe following value was entered:\nName: " + name + "\nNumber: " + to_string(number) + "\nHire Date: " + hireDate + "\nShift: " + to_string(shift) + "\nHourly Pay Rate: $" + to_string(hourlyPayRate) + "\n"); 
+                            // Convert the float to string with controlled precision
+                            string payRateString = to_string(hourlyPayRate);
+                            size_t dotPosition = payRateString.find('.');
+                            size_t precision = 2; // Set your desired precision
+
+                            if (dotPosition != std::string::npos && dotPosition + precision + 1 < payRateString.size()) {
+                                payRateString.erase(dotPosition + precision + 1);
+                            }
+                            session.addLog("A new employee was created.\nThe following value was entered:\nName: " + name + "\nNumber: " + to_string(number) + "\nHire Date: " + hireDate + "\nShift: " + to_string(shift) + "\nHourly Pay Rate: $" + payRateString + "\n"); 
                             
                             
                             
@@ -345,11 +555,27 @@ int main(){
                         cout << "\n";
                         cout << "You have selected to create a new manager." << endl; 
                         cout << "Manager Salary (60000.00): "; 
-                        cin >> salary; 
+                        while (!(cin >> salary) || salary < 0.0) {
+                            cout << "Invalid salary input. Please enter a valid non-negative float." << endl;
+                            cout << "Manager Salary (60000.00): ";
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
+                        cin.ignore();
                         cout << "Manager Username (newuser123 [no spaces allowed]): ";
-                        cin >> username; 
+                        getline(cin, username);
+                        while (username.find(' ') != string::npos || isInteger(username)) {
+                            cout << "Invalid username input. Spaces are not allowed. Cannot be an integer." << endl;
+                            cout << "Username: ";
+                            getline(cin, username);
+                        }
                         cout << "Manager Password (password123 [no spaces allowed]): ";
-                        cin >> password; 
+                        getline(cin, password);
+                        while (password.find(' ') != string::npos || isInteger(password)) {
+                            cout << "Invalid password input. Spaces are not allowed. Cannot be an integer." << endl;
+                            cout << "Password: ";
+                            getline(cin, password);
+                        }
 
                         cout << "\n";
                         cout << "These are the values you provided:" << endl; 
@@ -358,14 +584,28 @@ int main(){
                         cout << "Password: " << password << endl;
                         cout << "\n";
                         cout << "Are these values correct? (Type 1 to confirm and add the manager to the system OR 2 to deny and re-enter the values): ";
-                        cin >> choiceThree;
+                        while (!(cin >> choiceThree) || choiceThree != 1 && choiceThree != 2) {
+                            cout << "\nInvalid input. Please enter a 1 or a 2." << endl;
+                            cout << "Are these values correct? (Type 1 to confirm and add the manager to the system OR 2 to deny and re-enter the values): ";
+                            cin.clear(); 
+                            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                        }
                         if (choiceThree == 1){
-                             newManager.setSalary(salary);
+                            newManager.setSalary(salary);
                             newManager.setUsername(username);
                             newManager.setPassword(password);
 
+
                             managers.push_back(newManager);
-                            session.addLog("A new manager was created.\nThe following values were eneterd:\nSalary: $" + to_string(salary) + "\nUsername: " + username + "\nPassword: " + password + "\n");
+                            // Convert the float to string with controlled precision
+                            string salaryString = to_string(salary);
+                            size_t dotPosition = salaryString.find('.');
+                            size_t precision = 2; // Set your desired precision
+
+                            if (dotPosition != std::string::npos && dotPosition + precision + 1 < salaryString.size()) {
+                                salaryString.erase(dotPosition + precision + 1);
+                            }
+                            session.addLog("A new manager was created.\nThe following values were eneterd:\nSalary: $" + salaryString + "\nUsername: " + username + "\nPassword: " + password + "\n");
                             
                             
                             
@@ -394,4 +634,13 @@ int main(){
     outputFile.close();
 
     return 0; 
+}
+
+bool isInteger(const string& s) {
+    for (char c : s) {
+        if (!isdigit(c)) {
+            return false;
+        }
+    }
+    return true;
 }
