@@ -1,0 +1,7 @@
+Manager,nmcalister,password123,30000,
+Manager,jonnyyur,password123,80000,
+Manager,coleberry,password123,75000,
+Employee,Kim Tarminsk,2,05/14/2016,2,24,
+Employee,John Doe,3,08/25/2010,1,30.5,
+Employee,Jane Doe,4,09/13/2023,1,27.5,
+Employee,Jerry Ficher,879,04/13/2020,1,26.5,

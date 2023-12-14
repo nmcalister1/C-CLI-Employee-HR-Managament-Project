@@ -15,28 +15,79 @@ using namespace std;
 // checks to see if the user entered an int for that which is supposed to be a string
 bool isInteger(const string& s);
 
+// Function to save employee and manager objects to a file
+void saveToFile(const vector<ProductionWorker>& employees, const vector<Manager>& managers) {
+    ofstream outFile("employee_data.txt");
+
+    if (outFile.is_open()) {
+        // Save manager data
+        for (const Manager& manager : managers) {
+            outFile << "Manager," << manager.getUsername() << "," << manager.getPassword() << "," << manager.getSalary() << "," << endl;
+        }
+
+        // Save employee data
+        for (const ProductionWorker& employee : employees) {
+            outFile << "Employee," << employee.getName() << "," << employee.getNumber() << "," << employee.getHireDate() << "," << employee.getShift() << "," << employee.getHourlyPayRate() << "," << endl;
+        }
+
+        outFile.close();
+    } else {
+        cerr << "Error: Unable to open file for writing." << endl;
+    }
+}
+
+// Function to read employee and manager objects from a file
+void readFromFile(vector<ProductionWorker>& employees, vector<Manager>& managers) {
+    ifstream inFile("employee_data.txt");
+
+    if (inFile.is_open()) {
+        string line;
+        while (getline(inFile, line)) {
+            istringstream iss(line);
+            string type;
+            
+            if (getline(iss, type, ',')) {
+
+                if (type == "Manager") {
+                    string username, password, salaryStr;
+                    getline(iss >> ws, username, ',');
+                    getline(iss, password, ',');
+                    getline(iss, salaryStr, ',');
+
+                    float salary = stof(salaryStr);
+                    Manager manager(salary, username, password);
+                    managers.push_back(manager);
+                } else if (type == "Employee") {
+                    string name, numberStr, hireDate, shiftStr, hourlyPayRateStr;
+                    getline(iss >> ws, name, ',');
+                    getline(iss, numberStr, ',');
+                    getline(iss, hireDate, ',');
+                    getline(iss, shiftStr, ',');
+                    getline(iss, hourlyPayRateStr, ',');
+
+                    int number = stoi(numberStr);
+                    int shift = stoi(shiftStr);
+                    double hourlyPayRate = stod(hourlyPayRateStr);
+
+                    ProductionWorker employee(name, number, hireDate, shift, hourlyPayRate);
+                    employees.push_back(employee);
+                }
+            }
+        }
+
+        inFile.close();
+    } else {
+        cerr << "Error: Unable to open file for reading." << endl;
+    }
+}
+
 
 int main(){
     // global vectors to store employee objects and manager objects
     vector<ProductionWorker> employees;
     vector<Manager> managers;
 
-    // instantiate a manager
-    Manager manager(30.50, "nmcalister", "password123");
-    managers.push_back(manager);
-
-    const int DAY_SHIFT = 1;
-    const int NIGHT_SHIFT = 2;
-
-    // instantiate employees
-    ProductionWorker employee1("Jonny Yur", 1, "11/12/2018", DAY_SHIFT, 25.50);
-    ProductionWorker employee2("Kim Tarminsk", 2, "05/14/2016", NIGHT_SHIFT, 24.00);
-    ProductionWorker employee3("John Doe", 3, "08/25/2010", NIGHT_SHIFT, 26.70);
-    ProductionWorker employee4("Jane Doe", 4, "09/13/2023", DAY_SHIFT, 20.50);
-    employees.push_back(employee1);
-    employees.push_back(employee2);
-    employees.push_back(employee3);
-    employees.push_back(employee4);
+    readFromFile(employees, managers);
 
     // bool to determine whether a user is authorized or not
     bool authUsernameAndPassword = false;
@@ -749,6 +800,7 @@ int main(){
 
     } while (choice != 4);
 
+    saveToFile(employees, managers);
     // CLOSE THE FILESTREAM 
     outputFile.close();
 

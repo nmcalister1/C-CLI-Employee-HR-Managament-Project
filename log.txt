@@ -65,3 +65,62 @@ Password: password123
 Logging out at 2023-12-14 10:27:04
 
 
+
+
+Session Data:
+GUID: 1804289383
+User: nmcalister
+Login Time: 2023-12-14 14:34:52
+Changes Made: An employee was updated to a manager.
+The following values were entered:
+Salary: $80000.00
+Username: jonnyyur
+Password: password123
+
+John Doe's hourly pay rate was updated.
+The following value was entered:
+Hourly Pay Rate: $30.50
+
+Jane Doe's hourly pay rate was updated.
+The following value was entered:
+Hourly Pay Rate: $27.50
+
+John Doe's shift was updated.
+The following value was entered:
+Shift: 1(1 is Day Shift and 2 is Night Shift)
+
+A new employee was created.
+The following value was entered:
+Name: Jerry Ficher
+Number: 879
+Hire Date: 04/13/2020
+Shift: 1
+Hourly Pay Rate: $26.50
+
+A new manager was created.
+The following values were eneterd:
+Salary: $75000.00
+Username: coleberry
+Password: password123
+
+Logging out at 2023-12-14 14:38:43
+
+
+
+
+Session Data:
+GUID: 1804289383
+User: coleberry
+Login Time: 2023-12-14 14:39:21
+Changes Made: Logging out at 2023-12-14 14:39:46
+
+
+
+
+Session Data:
+GUID: 1804289383
+User: nmcalister
+Login Time: 2023-12-14 14:42:34
+Changes Made: Logging out at 2023-12-14 14:42:58
+
+
