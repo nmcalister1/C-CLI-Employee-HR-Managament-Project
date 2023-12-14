@@ -1,5 +1,3 @@
-
-
 Session Data:
 GUID: 1804289383
 User: nmcalister
@@ -19,5 +17,51 @@ Username: manager
 Password: password
 
 Logging out at 2023-12-13 11:11:12
+
+
+Session Data:
+GUID: 1804289383
+User: nmcalister
+Login Time: 2023-12-14 08:39:00
+Changes Made: Jonny Yur's hourly pay rate was updated.
+The following value was entered:
+Hourly Pay Rate: $30.50
+
+Logging out at 2023-12-14 08:39:33
+
+
+Session Data:
+GUID: 1804289383
+User: nmcalister
+Login Time: 2023-12-14 10:22:00
+Changes Made: An employee was updated to a manager.
+The following values were entered:
+Salary: $80000.00
+Username: jonnyyur
+Password: password123
+
+John Doe's hourly pay rate was updated.
+The following value was entered:
+Hourly Pay Rate: $30.50
+
+Jane Doe's shift was updated.
+The following value was entered:
+Shift: 2(1 is Day Shift and 2 is Night Shift)
+
+A new employee was created.
+The following value was entered:
+Name: Jimmy Bob
+Number: 89
+Hire Date: 04/15/2022
+Shift: 1
+Hourly Pay Rate: $23.50
+
+A new manager was created.
+The following values were eneterd:
+Salary: $75000.00
+Username: hadoberry
+Password: password123
+
+Logging out at 2023-12-14 10:27:04
 
 

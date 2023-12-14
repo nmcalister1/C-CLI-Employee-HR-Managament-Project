@@ -29,6 +29,12 @@ class Manager{
         float getSalary() const { return salary; }
         string getUsername() const { return username; }
         string getPassword() const { return password; }
-        const vector<ProductionWorker>& getEmployees() const { return employees; }
+        string getEmployees() const {
+            string employeeNames;
+            for (const ProductionWorker& employee : employees) {
+                employeeNames += employee.getName() + " " + to_string(employee.getNumber()) + " " +  employee.getHireDate() + " " +  to_string(employee.getShift()) + " " +  to_string(employee.getHourlyPayRate()) + "\n";
+            }
+            return employeeNames;
+        }
 };
 #endif
