@@ -124,3 +124,16 @@ Login Time: 2023-12-14 14:42:34
 Changes Made: Logging out at 2023-12-14 14:42:58
 
 
+
+
+Session Data:
+GUID: 1804289383
+User: nmcalister
+Login Time: 2023-12-15 15:28:53
+Changes Made: John Doe's shift was updated.
+The following value was entered:
+Shift: 2(1 is Day Shift and 2 is Night Shift)
+
+Logging out at 2023-12-15 15:29:26
+
+

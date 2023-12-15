@@ -180,21 +180,6 @@ int main(){
     time_t logouttime; 
 
     bool nameBool = false; 
-
-    // OPENS THE LOG.TXT FILE SO THAT WE CAN LOG SESSION DATA TO IT
-    ofstream outputFile("log.txt", ios::app);
-
-    /// EXCEPTION HANDLING /// 
-    try {
-        // THIS CHECKS IF THE FILE IS OPEN
-        if (!outputFile.is_open()) {
-            // THROW AN ERROR IF THE FILE IS NOT OPEN
-            throw runtime_error("This file failed to open.");
-        }
-    } catch (const exception& e) {
-        // PRINT ERROR MESSAGE TO USER
-        cerr << "An exception occurred: " << e.what() << endl;
-    }
     
 
     cout << "\n--- Welcome " << checkUsername << " ---\n"<< endl; 
@@ -789,8 +774,6 @@ int main(){
                 // ADD FINAL LOG FOR THE LOGOUT TIME
                 session.addLog("Logging out at " + session.displayFormattedTime(logouttime) + "\n");
                 
-                // GET THE SESSION LOGS AND PRINT THEM TO LOG.TXT
-                outputFile << session.logSessionInfo();
                 break; 
             default:
                 cout << "Invalid choice. Please enter a valid option.\n";
@@ -801,6 +784,22 @@ int main(){
     } while (choice != 4);
 
     saveToFile(employees, managers);
+    
+    // OPENS THE LOG.TXT FILE SO THAT WE CAN LOG SESSION DATA TO IT
+    ofstream outputFile("log.txt", ios::app);
+    /// EXCEPTION HANDLING /// 
+    try {
+        // THIS CHECKS IF THE FILE IS OPEN
+        if (!outputFile.is_open()) {
+            // THROW AN ERROR IF THE FILE IS NOT OPEN
+            throw runtime_error("This file failed to open.");
+        }
+    } catch (const exception& e) {
+        // PRINT ERROR MESSAGE TO USER
+        cerr << "An exception occurred: " << e.what() << endl;
+    }
+    // GET THE SESSION LOGS AND PRINT THEM TO LOG.TXT
+    outputFile << session.logSessionInfo();
     // CLOSE THE FILESTREAM 
     outputFile.close();
 
